@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload New Image</title>
+    <title>Upload Image</title>
+    <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
         
@@ -130,6 +130,9 @@
     <script>
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('image');
+        const githubUsername = 'th3-w41k3r5'; // Replace with your GitHub username
+        const repoName = 'praveen-hw'; // Replace with your repository name
+        const githubToken = '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'; // Replace with your GitHub Personal Access Token
 
         dropArea.addEventListener('dragover', (event) => {
             event.preventDefault();
@@ -164,47 +167,64 @@
             event.preventDefault();
 
             const formData = new FormData();
-            formData.append('image', fileInput.files[0]);
+            const file = fileInput.files[0];
+            formData.append('image', file);
             formData.append('alt', document.getElementById('alt').value);
-            const dateInput = document.getElementById('date');
-            const dateValue = dateInput.value;
+            const dateValue = document.getElementById('date').value;
             formData.append('date', dateValue);
-
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
 
             const alertContainer = document.getElementById('alert-container');
             alertContainer.innerHTML = '';
 
-            if (response.ok) {
-                const result = await response.json();
-                const successAlert = document.createElement('div');
-                successAlert.classList.add('alert', 'alert-success');
-                successAlert.textContent = 'Image uploaded successfully!';
-                alertContainer.appendChild(successAlert);
+            try {
+                // Upload the file to GitHub
+                const githubResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}/uploads/${file.name}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Upload image',
+                        content: await file.arrayBuffer().then(buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)))),
+                        branch: 'main' // or 'gh-pages' depending on your GitHub Pages setup
+                    })
+                });
 
-                // Update the modal text in index.html
-                const indexResponse = await fetch('/');
-                const indexText = await indexResponse.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(indexText, 'text/html');
-                const introModalText = doc.querySelector('#intro-modal .modal-content p strong');
-                if (introModalText) {
-                    introModalText.textContent = dateValue;
+                if (githubResponse.ok) {
+                    const result = await githubResponse.json();
+                    const filename = file.name;
+                    const imageUrl = `https://${githubUsername}.github.io/${repoName}/uploads/${filename}`;
+
+                    // Update metadata using Netlify function
+                    const metadataResponse = await fetch('/.netlify/functions/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ alt: document.getElementById('alt').value, date: dateValue, filename: imageUrl })
+                    });
+
+                    if (metadataResponse.ok) {
+                        const metadataResult = await metadataResponse.json();
+                        const successAlert = document.createElement('div');
+                        successAlert.classList.add('alert', 'alert-success');
+                        successAlert.textContent = 'Image uploaded successfully!';
+                        alertContainer.appendChild(successAlert);
+                    } else {
+                        throw new Error('Failed to update metadata');
+                    }
+                } else {
+                    throw new Error('Failed to upload image to GitHub');
                 }
-            } else {
+            } catch (error) {
                 const failureAlert = document.createElement('div');
                 failureAlert.classList.add('alert', 'alert-failure');
-                failureAlert.textContent = 'Image upload failed. Please try again.';
+                failureAlert.textContent = error.message;
                 alertContainer.appendChild(failureAlert);
             }
         });
     </script>
 </body>
 </html>
-
-
-
 
