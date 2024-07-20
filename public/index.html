@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="PRAVEEN VI HOMEWORK">
+    <meta property="og:description" content="Daily Homework Sheet Images All in One Place">
+    <meta property="og:image" content="hw-img/competishun.jpg">
+    <meta property="og:url" content="https://praveen-hw.netlify.app">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <title>PRAVEEN VI HOMEWORK</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="intro-modal" class="modal">
+        <div class="modal-content">
+            <p>HOMEWORK TILL <strong id="latest-date">27-06-2024</strong></p>
+            <p>HAS BEEN UPDATED</p>
+            <button class="close-button" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    <header>
+        <div class="header-container">
+            <div class="left-content">
+                <select id="date-select" class="date-select">
+                    <option value="" disabled selected>SEARCH IMAGES BY DATE</option>
+                    <!-- Existing options here -->
+                </select>
+            </div>
+            <a href="https://fcldn.courses.store" class="logo-link">
+                <img src="https://competishun-test-id-password.netlify.app/logo.png" alt="Logo" class="logo">
+            </a>
+            <div class="dummy"></div>
+        </div>
+    </header>
+    <h1>PRAVEEN-VI HOMEWORK</h1>
+    <p>(If you are using mobile, then zoom the images)</p>
+    <main id="image-container">
+        <!-- Images will be loaded here dynamically -->
+    </main>
+    <script>
+        function closeModal() {
+            document.getElementById('intro-modal').style.display = 'none';
+        }
+
+        window.onload = function() {
+            document.getElementById('intro-modal').style.display = 'block';
+            loadImages();
+        };
+
+        document.getElementById('date-select').addEventListener('change', function() {
+            var selectedValue = this.value;
+            if (selectedValue) {
+                var targetImage = document.querySelector('img[alt="' + selectedValue + '"]');
+                if (targetImage) {
+                    targetImage.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+
+        async function loadImages() {
+            const response = await fetch('/images');
+            const images = await response.json();
+            const container = document.getElementById('image-container');
+            container.innerHTML = '';
+            images.forEach(image => {
+                const section = document.createElement('section');
+                section.classList.add('image-post');
+
+                const img = document.createElement('img');
+                img.src = image.src;
+                img.alt = image.alt;
+                section.appendChild(img);
+
+                container.appendChild(section);
+
+                // Add option to date-select dropdown
+                const option = document.createElement('option');
+                option.value = image.alt;
+                option.textContent = image.date;
+                document.getElementById('date-select').appendChild(option);
+            });
+
+            // Update the latest date in the modal
+            if (images.length > 0) {
+                const latestDate = images[images.length - 1].date;
+                document.getElementById('latest-date').textContent = latestDate;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+

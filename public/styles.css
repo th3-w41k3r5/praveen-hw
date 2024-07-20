@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Mukta:wght@200;300;400;500;600;700;800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1DA1F2;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    z-index: 1000;
+    box-shadow: 0px 0px 13px rgba(0, 0, 0, 0.707);
+}
+
+
+header .logo {
+    height: 50px;
+    
+}
+
+h1 {
+    text-align: center;
+    margin-top: 110px;
+    margin-bottom: 5px;
+    font-family: "Josefin Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 28px;
+    
+}
+p {
+    text-align: center;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.date-select {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+    color: #1DA1F2;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: "Poppins", sans-serif;
+}
+.date-select:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.date-select option {
+    background-color: white;
+    color: black;
+}
+main {
+    padding: 10px;
+}
+
+.image-post {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.image-post img {
+    max-width: 100%;
+    height: auto;
+    /*box-shadow:  0px 0px 10px  rgb(172, 172, 172);*/
+}
+
+@media (min-width: 768px) {
+    header {
+        padding: 15px 0;
+    }
+    h1 {
+        margin-top: 108px;
+        font-size: 44px;
+    }
+    p {
+        font-size: 24px;
+    }
+    header .logo {
+        height: 50px;
+        float: left;
+    }
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1200px;
+        padding: 0 20px;
+    }
+    .left-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .dummy {
+        flex: 1;
+    }
+}
+/* Modal styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.619); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    line-height: 25px;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 40px 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.116);
+    position: relative;
+    animation: fadeIn 0.5s ease-in-out;
+    top: 250px;
+    margin-left: 430px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close-button {
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.close-button:hover,
+.close-button:focus {
+    background-color: #0083d4;
+    text-decoration: none;
+}
+@media (max-width: 768px) {
+    .modal-content {
+        width: 80%; /* Decrease width on mobile */
+        font-size: 16px;
+        top: 250px;
+        margin-left: 19px;
+        padding: 30px 20px;
+        
+    }
+
+    .close-button {
+        font-size: 18px; /* Adjust close button size on mobile */
+        top: 10px;
+        right: 10px;
+    }
+    .modal {
+        line-height: 15px;
+    }
+    .date-select {
+        display: none; /* Hide dropdown on mobile */
+    }
+}
