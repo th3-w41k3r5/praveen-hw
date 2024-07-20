@@ -178,7 +178,7 @@
 
             try {
                 // Upload the file to GitHub
-                const githubResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}/uploads/${file.name}`, {
+                const githubResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}/contents/uploads/${file.name}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${githubToken}`,
