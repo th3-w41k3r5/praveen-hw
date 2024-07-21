@@ -33,12 +33,26 @@ exports.handler = async (event) => {
 
         // Fetch the existing images.json
         let images = [];
+        let fileSha = '';
         try {
             const response = await fetch(imagesUrl);
             if (!response.ok) throw new Error('Failed to fetch images.json');
             images = await response.json();
         } catch (err) {
             console.error('Could not read images.json', err);
+            // If not found, initialize fileSha to handle new file creation
+            fileSha = '';
+        }
+
+        // Get SHA of images.json file
+        if (fileSha === '') {
+            const { data } = await octokit.repos.getContent({
+                owner: process.env.GITHUB_USERNAME,
+                repo: process.env.GITHUB_REPO,
+                path: 'images.json',
+                branch: 'main'
+            });
+            fileSha = data.sha;
         }
 
         // Add the new image to the array
@@ -53,7 +67,7 @@ exports.handler = async (event) => {
             message: 'Update images.json',
             content: updatedContent,
             branch: 'main',
-            sha: process.env.FILE_SHA // Use the SHA of the file being updated
+            sha: fileSha // Use the SHA of the file being updated
         });
 
         return {
@@ -68,6 +82,7 @@ exports.handler = async (event) => {
         };
     }
 };
+
 
 
 
