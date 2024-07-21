@@ -111,6 +111,44 @@
                 width: 270px;
             }
         }
+
+        /* Loading Modal Styles */
+        .loading-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1DA1F2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -127,9 +165,16 @@
             <div id="alert-container"></div>
         </form>
     </div>
+    <div id="loadingModal" class="loading-modal">
+        <div class="loading-modal-content">
+            <div class="loading-spinner"></div>
+            <p>Uploading the image...</p>
+        </div>
+    </div>
     <script>
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('image');
+        const loadingModal = document.getElementById('loadingModal');
 
         dropArea.addEventListener('dragover', (event) => {
             event.preventDefault();
@@ -162,6 +207,7 @@
 
         document.getElementById('upload-form').addEventListener('submit', async function (event) {
             event.preventDefault();
+            loadingModal.style.display = 'flex';
 
             const formData = new FormData();
             const file = fileInput.files[0];
@@ -186,6 +232,7 @@
                     });
 
                     if (metadataResponse.ok) {
+                        loadingModal.style.display = 'none';
                         const successAlert = document.createElement('div');
                         successAlert.classList.add('alert', 'alert-success');
                         successAlert.textContent = 'Image uploaded successfully!';
@@ -195,6 +242,7 @@
                     }
                 }
             } catch (error) {
+                loadingModal.style.display = 'none';
                 const failureAlert = document.createElement('div');
                 failureAlert.classList.add('alert', 'alert-failure');
                 failureAlert.textContent = error.message;
