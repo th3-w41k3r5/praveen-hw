@@ -130,9 +130,6 @@
     <script>
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('image');
-        const githubUsername = 'th3-w41k3r5'; // Replace with your GitHub username
-        const repoName = 'praveen-hw'; // Replace with your repository name
-        const githubToken = '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'; // Replace with your GitHub Personal Access Token
 
         dropArea.addEventListener('dragover', (event) => {
             event.preventDefault();
@@ -168,45 +165,27 @@
 
             const formData = new FormData();
             const file = fileInput.files[0];
-            formData.append('image', file);
-            formData.append('alt', document.getElementById('alt').value);
-            const dateValue = document.getElementById('date').value;
-            formData.append('date', dateValue);
-
+            const alt = document.getElementById('alt').value;
+            const date = document.getElementById('date').value;
             const alertContainer = document.getElementById('alert-container');
             alertContainer.innerHTML = '';
 
             try {
-                // Upload the file to GitHub
-                const githubResponse = await fetch(`https://api.github.com/repos/${githubUsername}/${repoName}/contents/uploads/${file.name}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Upload image',
-                        content: await file.arrayBuffer().then(buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)))),
-                        branch: 'main' // or 'gh-pages' depending on your GitHub Pages setup
-                    })
-                });
-
-                if (githubResponse.ok) {
-                    const result = await githubResponse.json();
-                    const filename = file.name;
-                    const imageUrl = `https://${githubUsername}.github.io/${repoName}/uploads/${filename}`;
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = async function () {
+                    const base64data = reader.result.split(',')[1];
 
                     // Update metadata using Netlify function
-                    const metadataResponse = await fetch('/.netlify/functions/upload', {
+                    const metadataResponse = await fetch('/api/upload', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ alt: document.getElementById('alt').value, date: dateValue, filename: imageUrl })
+                        body: JSON.stringify({ alt, date, filename: file.name, content: base64data })
                     });
 
                     if (metadataResponse.ok) {
-                        const metadataResult = await metadataResponse.json();
                         const successAlert = document.createElement('div');
                         successAlert.classList.add('alert', 'alert-success');
                         successAlert.textContent = 'Image uploaded successfully!';
@@ -214,8 +193,6 @@
                     } else {
                         throw new Error('Failed to update metadata');
                     }
-                } else {
-                    throw new Error('Failed to upload image to GitHub');
                 }
             } catch (error) {
                 const failureAlert = document.createElement('div');
@@ -227,4 +204,5 @@
     </script>
 </body>
 </html>
+
 
