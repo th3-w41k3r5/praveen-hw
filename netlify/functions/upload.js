@@ -1,5 +1,4 @@
 const { Octokit } = require('@octokit/rest');
-const fetch = (await import('node-fetch')).default;
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -13,6 +12,9 @@ exports.handler = async (event) => {
     });
 
     try {
+        // Dynamic import of node-fetch within the function
+        const fetch = (await import('node-fetch')).default;
+
         // Upload the image to GitHub
         await octokit.repos.createOrUpdateFileContents({
             owner: process.env.GITHUB_USERNAME,
@@ -82,6 +84,7 @@ exports.handler = async (event) => {
         };
     }
 };
+
 
 
 
