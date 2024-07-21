@@ -1,22 +1,22 @@
 {
-  "name": "praveen-vi-homework---copy",
+  "name": "praveen-vi-homework",
   "version": "1.0.0",
-  "description": "",
+  "description": "A project to upload and display homework images",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js",
-    "build": "echo 'No build step required'"
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "@octokit/rest": "^18.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
   }
 }
+
