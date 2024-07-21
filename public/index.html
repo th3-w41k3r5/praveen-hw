@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="PRAVEEN VI HOMEWORK">
     <meta property="og:description" content="Daily Homework Sheet Images All in One Place">
-    <meta property="og:image" content="hw-img/competishun.jpg">
+    <meta property="og:image" content="uploads/competishun.jpg">
     <meta property="og:url" content="https://praveen-hw.onrender.com">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -62,34 +62,41 @@
         });
 
         async function loadImages() {
-            const response = await fetch('/images.json');
-            const images = await response.json();
-            const container = document.getElementById('image-container');
-            container.innerHTML = '';
-            images.forEach(image => {
-                const section = document.createElement('section');
-                section.classList.add('image-post');
+    try {
+        const response = await fetch('/images.json');
+        if (!response.ok) throw new Error('Network response was not ok.');
+        
+        const images = await response.json();
+        const container = document.getElementById('image-container');
+        container.innerHTML = '';
+        images.forEach(image => {
+            const section = document.createElement('section');
+            section.classList.add('image-post');
 
-                const img = document.createElement('img');
-                img.src = image.src;
-                img.alt = image.alt;
-                section.appendChild(img);
+            const img = document.createElement('img');
+            img.src = image.src;
+            img.alt = image.alt;
+            section.appendChild(img);
 
-                container.appendChild(section);
+            container.appendChild(section);
 
-                // Add option to date-select dropdown
-                const option = document.createElement('option');
-                option.value = image.alt;
-                option.textContent = image.date;
-                document.getElementById('date-select').appendChild(option);
-            });
+            // Add option to date-select dropdown
+            const option = document.createElement('option');
+            option.value = image.alt;
+            option.textContent = image.date;
+            document.getElementById('date-select').appendChild(option);
+        });
 
-            // Update the latest date in the modal
-            if (images.length > 0) {
-                const latestDate = images[images.length - 1].date;
-                document.getElementById('latest-date').textContent = latestDate;
-            }
+        // Update the latest date in the modal
+        if (images.length > 0) {
+            const latestDate = images[images.length - 1].date;
+            document.getElementById('latest-date').textContent = latestDate;
         }
+    } catch (error) {
+        console.error('Failed to load images:', error);
+    }
+}
+
     </script>
 </body>
 </html>
