@@ -18,7 +18,7 @@ exports.handler = async (event) => {
 
     try {
         // Upload the new image to the GitHub repository
-        const uploadResponse = await octokit.repos.createOrUpdateFileContents({
+        await octokit.repos.createOrUpdateFileContents({
             owner,
             repo,
             path,
@@ -41,7 +41,7 @@ exports.handler = async (event) => {
             ref: 'main'
         });
 
-        const imagesSha = process.env.FILE_SHA || imagesJsonFile.sha;
+        const imagesSha = imagesJsonFile.sha;
         const imagesContent = Buffer.from(imagesJsonFile.content, 'base64').toString('utf-8');
         let images = JSON.parse(imagesContent);
 
@@ -49,7 +49,7 @@ exports.handler = async (event) => {
         images.push(newImage);
 
         // Update the images.json file on GitHub
-        const updateResponse = await octokit.repos.createOrUpdateFileContents({
+        await octokit.repos.createOrUpdateFileContents({
             owner,
             repo,
             path: imagesJsonPath,
@@ -71,6 +71,8 @@ exports.handler = async (event) => {
         };
     }
 };
+
+
 
 
 
