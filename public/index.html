@@ -62,7 +62,7 @@
         });
 
         async function loadImages() {
-            const response = await fetch('/images');
+            const response = await fetch('/images.json');
             const images = await response.json();
             const container = document.getElementById('image-container');
             container.innerHTML = '';
