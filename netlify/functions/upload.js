@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     const { alt, date, filename, content } = JSON.parse(event.body);
 
     // Dynamically import node-fetch
-    const fetch = (await import('node-fetch')).default;
+    const { default: fetch } = await import('node-fetch');
 
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN
@@ -27,25 +27,27 @@ exports.handler = async (event) => {
         });
 
         const newImage = { src: `https://${process.env.GITHUB_USERNAME}.github.io/${process.env.GITHUB_REPO}/uploads/${filename}`, alt, date };
-        const imagesPath = `https://th3-w41k3r5.github.io/${process.env.GITHUB_REPO}/images.json`;
+        const imagesUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_USERNAME}/${process.env.GITHUB_REPO}/main/images.json`;
 
+        // Fetch the existing images.json
         let images = [];
         try {
-            const response = await fetch(imagesPath);
+            const response = await fetch(imagesUrl);
             images = await response.json();
         } catch (err) {
             console.error('Could not read images.json', err);
         }
 
         images.push(newImage);
-        // Upload the updated images.json file
-        await fetch(imagesPath, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `token ${process.env.GITHUB_TOKEN}`
-            },
-            body: JSON.stringify(images)
+        // Update images.json on GitHub
+        const updatedContent = Buffer.from(JSON.stringify(images)).toString('base64');
+        await octokit.repos.createOrUpdateFileContents({
+            owner: process.env.GITHUB_USERNAME,
+            repo: process.env.GITHUB_REPO,
+            path: 'images.json',
+            message: 'Update images.json',
+            content: updatedContent,
+            branch: 'main'
         });
 
         return {
@@ -59,6 +61,7 @@ exports.handler = async (event) => {
         };
     }
 };
+
 
 
 
