@@ -177,7 +177,7 @@
                     const base64data = reader.result.split(',')[1];
 
                     // Update metadata using Netlify function
-                    const metadataResponse = await fetch('/netlify/functions/upload', {
+                    const metadataResponse = await fetch('/.netlify/functions/upload', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
