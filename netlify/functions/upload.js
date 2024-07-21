@@ -31,7 +31,7 @@ exports.handler = async (event) => {
             date
         };
 
-        const imagesUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_USERNAME}/${process.env.GITHUB_REPO}/${process.env.COMMIT_SHA}/images.json`;
+        const imagesUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_USERNAME}/${process.env.GITHUB_REPO}/main/images.json`;
 
         // Fetch the existing images.json
         let images = [];
@@ -40,14 +40,7 @@ exports.handler = async (event) => {
             const response = await fetch(imagesUrl);
             if (!response.ok) throw new Error('Failed to fetch images.json');
             images = await response.json();
-        } catch (err) {
-            console.error('Could not read images.json', err);
-            // If not found, initialize fileSha to handle new file creation
-            fileSha = '';
-        }
 
-        // Get SHA of images.json file
-        if (fileSha === '') {
             const { data } = await octokit.repos.getContent({
                 owner: process.env.GITHUB_USERNAME,
                 repo: process.env.GITHUB_REPO,
@@ -55,13 +48,15 @@ exports.handler = async (event) => {
                 branch: 'main'
             });
             fileSha = data.sha;
+        } catch (err) {
+            console.error('Could not read images.json', err);
         }
 
         // Add the new image to the array
         images.push(newImage);
 
         // Update images.json on GitHub
-        const updatedContent = Buffer.from(JSON.stringify(images)).toString('base64');
+        const updatedContent = Buffer.from(JSON.stringify(images, null, 2)).toString('base64');
         await octokit.repos.createOrUpdateFileContents({
             owner: process.env.GITHUB_USERNAME,
             repo: process.env.GITHUB_REPO,
@@ -84,6 +79,7 @@ exports.handler = async (event) => {
         };
     }
 };
+
 
 
 
