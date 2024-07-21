@@ -114,7 +114,7 @@
 
         /* Loading Modal Styles */
         .loading-modal {
-            display: none;
+            display: none; /* Ensure the modal is hidden by default */
             position: fixed;
             top: 0;
             left: 0;
@@ -172,6 +172,12 @@
         </div>
     </div>
     <script>
+        // Hide loading modal on page load
+        window.addEventListener('load', () => {
+            const loadingModal = document.getElementById('loadingModal');
+            loadingModal.style.display = 'none'; // Ensure the modal is hidden initially
+        });
+
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('image');
         const loadingModal = document.getElementById('loadingModal');
@@ -207,7 +213,7 @@
 
         document.getElementById('upload-form').addEventListener('submit', async function (event) {
             event.preventDefault();
-            loadingModal.style.display = 'flex';
+            loadingModal.style.display = 'flex'; // Show loading modal
 
             const formData = new FormData();
             const file = fileInput.files[0];
@@ -232,7 +238,7 @@
                     });
 
                     if (metadataResponse.ok) {
-                        loadingModal.style.display = 'none';
+                        loadingModal.style.display = 'none'; // Hide loading modal
                         const successAlert = document.createElement('div');
                         successAlert.classList.add('alert', 'alert-success');
                         successAlert.textContent = 'Image uploaded successfully!';
@@ -242,7 +248,7 @@
                     }
                 }
             } catch (error) {
-                loadingModal.style.display = 'none';
+                loadingModal.style.display = 'none'; // Hide loading modal on error
                 const failureAlert = document.createElement('div');
                 failureAlert.classList.add('alert', 'alert-failure');
                 failureAlert.textContent = error.message;
@@ -252,6 +258,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
