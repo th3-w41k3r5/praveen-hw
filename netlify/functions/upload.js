@@ -1,6 +1,5 @@
 const { Octokit } = require('@octokit/rest');
-const fs = require('fs');
-const path = require('path');
+const fetch = require('node-fetch'); // For HTTP requests
 
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
@@ -14,27 +13,49 @@ exports.handler = async (event) => {
     });
 
     try {
-        const response = await octokit.repos.createOrUpdateFileContents({
+        // Upload the image to GitHub
+        await octokit.repos.createOrUpdateFileContents({
             owner: process.env.GITHUB_USERNAME,
             repo: process.env.GITHUB_REPO,
             path: `uploads/${filename}`,
             message: 'Upload new image',
-            content: content,
+            content: Buffer.from(content, 'base64').toString('base64'),
             branch: 'main'
         });
 
         const newImage = { src: `https://${process.env.GITHUB_USERNAME}.github.io/${process.env.GITHUB_REPO}/uploads/${filename}`, alt, date };
-        const imagesPath = path.resolve(__dirname, 'images.json');
 
+        // URL of the images.json file on GitHub Pages
+        const imagesUrl = 'https://th3-w41k3r5.github.io/praveen-hw/images.json';
+
+        // Fetch existing images.json from GitHub Pages
         let images = [];
         try {
-            images = JSON.parse(fs.readFileSync(imagesPath));
+            const imagesResponse = await fetch(imagesUrl);
+            if (imagesResponse.ok) {
+                images = await imagesResponse.json();
+            } else {
+                console.error('Could not fetch images.json', await imagesResponse.text());
+            }
         } catch (err) {
-            console.error('Could not read images.json', err);
+            console.error('Error fetching images.json', err);
         }
 
+        // Add the new image to the array
         images.push(newImage);
-        fs.writeFileSync(imagesPath, JSON.stringify(images));
+
+        // Convert updated images array to JSON and encode it as base64 for GitHub
+        const updatedImagesContent = Buffer.from(JSON.stringify(images)).toString('base64');
+
+        // Update images.json on GitHub
+        await octokit.repos.createOrUpdateFileContents({
+            owner: process.env.GITHUB_USERNAME,
+            repo: process.env.GITHUB_REPO,
+            path: 'images.json',
+            message: 'Update images.json with new image metadata',
+            content: updatedImagesContent,
+            branch: 'main'
+        });
 
         return {
             statusCode: 200,
@@ -47,4 +68,5 @@ exports.handler = async (event) => {
         };
     }
 };
+
 

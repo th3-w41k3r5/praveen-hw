@@ -63,7 +63,7 @@
 
         async function loadImages() {
             try {
-                const response = await fetch('/images.json');
+                const response = await fetch('https://th3-w41k3r5.github.io/praveen-hw/images.json');
                 if (!response.ok) throw new Error('Network response was not ok.');
 
                 const images = await response.json();
