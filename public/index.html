@@ -62,44 +62,44 @@
         });
 
         async function loadImages() {
-    try {
-        const response = await fetch('/images.json');
-        if (!response.ok) throw new Error('Network response was not ok.');
-        
-        const images = await response.json();
-        const container = document.getElementById('image-container');
-        container.innerHTML = '';
-        images.forEach(image => {
-            const section = document.createElement('section');
-            section.classList.add('image-post');
+            try {
+                const response = await fetch('/images.json');
+                if (!response.ok) throw new Error('Network response was not ok.');
 
-            const img = document.createElement('img');
-            img.src = image.src;
-            img.alt = image.alt;
-            section.appendChild(img);
+                const images = await response.json();
+                const container = document.getElementById('image-container');
+                container.innerHTML = '';
+                images.forEach(image => {
+                    const section = document.createElement('section');
+                    section.classList.add('image-post');
 
-            container.appendChild(section);
+                    const img = document.createElement('img');
+                    img.src = image.src;
+                    img.alt = image.alt;
+                    section.appendChild(img);
 
-            // Add option to date-select dropdown
-            const option = document.createElement('option');
-            option.value = image.alt;
-            option.textContent = image.date;
-            document.getElementById('date-select').appendChild(option);
-        });
+                    container.appendChild(section);
 
-        // Update the latest date in the modal
-        if (images.length > 0) {
-            const latestDate = images[images.length - 1].date;
-            document.getElementById('latest-date').textContent = latestDate;
+                    // Add option to date-select dropdown
+                    const option = document.createElement('option');
+                    option.value = image.alt;
+                    option.textContent = image.date;
+                    document.getElementById('date-select').appendChild(option);
+                });
+
+                // Update the latest date in the modal
+                if (images.length > 0) {
+                    const latestDate = images[images.length - 1].date;
+                    document.getElementById('latest-date').textContent = latestDate;
+                }
+            } catch (error) {
+                console.error('Failed to load images:', error);
+            }
         }
-    } catch (error) {
-        console.error('Failed to load images:', error);
-    }
-}
-
     </script>
 </body>
 </html>
+
 
 
 

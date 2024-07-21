@@ -19,7 +19,7 @@ exports.handler = async (event) => {
             repo: process.env.GITHUB_REPO,
             path: `uploads/${filename}`,
             message: 'Upload new image',
-            content: Buffer.from(content, 'base64').toString('base64'),
+            content: content,
             branch: 'main'
         });
 
@@ -47,3 +47,4 @@ exports.handler = async (event) => {
         };
     }
 };
+
