@@ -159,7 +159,7 @@
                 <input type="file" id="image" name="image" accept="image/*" required>
                 <p>Drag & Drop your file here or <span>Choose File</span></p>
             </div>
-            <input type="text" id="alt" name="alt" placeholder="Image Description (alt text)" required>
+            <input type="text" id="alt" name="alt" placeholder="Enter alt text (latest: )" required>
             <input type="date" id="date" name="date" required>
             <button type="submit">Upload</button>
             <div id="alert-container"></div>
@@ -181,6 +181,24 @@
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('image');
         const loadingModal = document.getElementById('loadingModal');
+        const altInput = document.getElementById('alt');
+
+        // Fetch the latest alt text from images.json
+        async function fetchLatestAltText() {
+            try {
+                const response = await fetch('https://th3-w41k3r5.github.io/praveen-hw/images.json');
+                if (!response.ok) throw new Error('Network response was not ok.');
+
+                const images = await response.json();
+                if (images.length > 0) {
+                    const latestAlt = images[images.length - 1].alt;
+                    altInput.placeholder = `Enter alt text (latest: ${latestAlt})`;
+                }
+            } catch (error) {
+                console.error('Failed to fetch latest alt text:', error);
+            }
+        }
+
 
         dropArea.addEventListener('dragover', (event) => {
             event.preventDefault();
@@ -255,6 +273,7 @@
                 alertContainer.appendChild(failureAlert);
             }
         });
+        window.onload = fetchLatestAltText;
     </script>
 </body>
 </html>
